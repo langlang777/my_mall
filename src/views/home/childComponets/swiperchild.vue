@@ -31,5 +31,7 @@ export default {
 </script>
 
 <style>
-
+.swiperimg {
+  width: 100%;
+}
 </style>

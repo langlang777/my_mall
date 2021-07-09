@@ -3,19 +3,33 @@
     <nav-bar class="home-nav">
       <template v-slot:center> 购物街 </template>
     </nav-bar>
-    <Scroll class="scroll">
+    <TabControl
+        :titles="title"
+        @tabclick="tabclick"
+        ref="tabcontrol2"
+        class="tabcontrol"
+        v-show="isfixed"
+      ></TabControl>
+    <scroll
+      class="scroll"
+      ref="scroll"
+      :probeType="3"
+      @scroll="getposition"
+      :pullUpLoad="true"
+      @pullingUp="pullingUp"
+    >
       <!-- banner 数据给子组件 -->
-      <swiper-child :banner="banner"></swiper-child>
+      <swiper-child :banner="banner" @imgload='imgload'></swiper-child>
       <recommend-view :recommends="recommends"></recommend-view>
       <feature-view></feature-view>
       <TabControl
         :titles="title"
-        class="tabcontrol"
         @tabclick="tabclick"
+        ref="tabcontrol1"
       ></TabControl>
       <GoodsList :goods="showgoods"></GoodsList>
-    </Scroll>
-    <BackTop @click.native="backtopclick"></BackTop>
+    </scroll>
+    <BackTop @click="backtopclick" v-show="isshow"></BackTop>
   </div>
 </template>
 
@@ -25,7 +39,7 @@ import NavBar from "components/common/navbar/NavBar.vue";
 import TabControl from "components/content/tabControl/TabControl.vue";
 import GoodsList from "components/content/goods/goodslist";
 import Scroll from "components/common/scroll/Scroll.vue";
-import BackTop from "components/content/backtop/BackTop.vue"
+import BackTop from "components/content/backtop/BackTop.vue";
 
 // 导入子组件
 import SwiperChild from "./childComponets/swiperchild.vue";
@@ -47,6 +61,9 @@ export default {
         sell: { page: 0, list: [] },
       },
       currentType: "pop",
+      isshow: false,
+      tabcontroloffset:0,
+      isfixed:false
     };
   },
   components: {
@@ -86,10 +103,30 @@ export default {
         case 2:
           this.currentType = "sell";
           break;
-      }
+      };
+      this.$refs.tabcontrol2.currentindex =index;
+      this.$refs.tabcontrol1.currentindex =index;
     },
-    backtopclick(){
-      console.log(11);
+    imgload(){
+      // 获得 tabcontrol 距离页面高度
+      this.tabcontroloffset = this.$refs.tabcontrol1.$el.offsetTop
+    },
+    getposition(position) {
+      // 决定 返回top 是否显示
+      // console.log(position);
+      this.isshow = position.y <= -500;
+
+      // 决定tabctrol是否吸顶
+      this.isfixed = this.tabcontroloffset < -(position.y)
+    },
+    backtopclick() {
+      // 通过refs 获取子组件的 属性
+      this.$refs.scroll.scroll.scrollTo(0, 0, 500);
+    },
+    // 上拉加载更多
+    pullingUp() {
+      console.log('more');
+      this.getHomeGoods(this.currentType)
     },
     getHomeMultidata() {
       getHomeMultidata().then((res) => {
@@ -99,10 +136,13 @@ export default {
     },
     getHomeGoods(type) {
       const page = this.goods[type].page + 1;
-      getHomeGoods(type, 1).then((res) => {
+      // 下面这个是网络请求
+      getHomeGoods(type, page).then((res) => {
         // list1.push(...[1,2,3,4]) 可以将里面的【1234】 拆开传入 list1
         this.goods[type].list.push(...res.data.data.list);
         this.goods[type].page += 1;
+
+        this.$refs.scroll.scroll.finishPullUp()
       });
     },
   },
@@ -118,18 +158,17 @@ export default {
 .home-nav {
   background-color: var(--color-tint);
   color: white;
-  position: fixed;
+  /* position: fixed;
   left: 0;
   right: 0;
   top: 0;
+  z-index: 9; */
+}
+.tabcontrol{
+  position: relative;
   z-index: 9;
 }
 
-.tabcontrol {
-  position: sticky;
-  top: 44px;
-  z-index: 9;
-}
 .scroll {
   overflow: hidden;
   position: absolute;
@@ -138,4 +177,6 @@ export default {
   left: 0;
   right: 0;
 }
+
+
 </style>

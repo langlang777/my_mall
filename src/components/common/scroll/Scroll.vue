@@ -7,11 +7,29 @@
 </template>
 
 <script>
+// import BScroll from '@better-scroll/core'
+
+// import Pullup from '@better-scroll/pull-up'
 import BScroll from 'better-scroll'
+// BScroll.use(Pullup)
 export default {
     data(){
         return {
             scroll:null
+        }
+    },
+    props:{
+        probeType:{
+            type:Number,
+            default(){
+                return 0
+            }
+        },
+        pullUpLoad:{
+            type:Boolean,
+            default(){
+                return false
+            }
         }
     },
     // 生命周期函数 当组件挂着时调用
@@ -19,7 +37,18 @@ export default {
     mounted(){
         this.scroll = new BScroll(this.$refs.wrapper,{
             observeDOM:true,
-            click:true
+            observeImage:true,
+            click:true,
+            probeType:this.probeType,
+            pullUpLoad: this.pullUpLoad,
+        })
+
+        this.scroll.on('scroll',(position)=>{
+            this.$emit('scroll',position)
+        })
+
+        this.scroll.on('pullingUp',()=>{
+            this.$emit('pullingUp')
         })
     }
 }

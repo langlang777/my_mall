@@ -4,12 +4,12 @@
       <template v-slot:center> 购物街 </template>
     </nav-bar>
     <TabControl
-        :titles="title"
-        @tabclick="tabclick"
-        ref="tabcontrol2"
-        class="tabcontrol"
-        v-show="isfixed"
-      ></TabControl>
+      :titles="title"
+      @tabclick="tabclick"
+      ref="tabcontrol2"
+      class="tabcontrol"
+      v-show="isfixed"
+    ></TabControl>
     <scroll
       class="scroll"
       ref="scroll"
@@ -19,7 +19,7 @@
       @pullingUp="pullingUp"
     >
       <!-- banner 数据给子组件 -->
-      <swiper-child :banner="banner" @imgload='imgload'></swiper-child>
+      <swiper-child :banner="banner" @imgload="imgload"></swiper-child>
       <recommend-view :recommends="recommends"></recommend-view>
       <feature-view></feature-view>
       <TabControl
@@ -62,8 +62,9 @@ export default {
       },
       currentType: "pop",
       isshow: false,
-      tabcontroloffset:0,
-      isfixed:false
+      tabcontroloffset: 0,
+      isfixed: false,
+      saveY:0
     };
   },
   components: {
@@ -75,6 +76,19 @@ export default {
     GoodsList,
     Scroll,
     BackTop,
+  },
+  activated(){
+    console.log(this.$refs.scroll.scroll.y);
+    this.$refs.scroll.scroll.refresh()
+    this.$refs.scroll.scroll.scrollTo(0,this.saveY,0)
+    
+  },
+  deactivated() {
+    console.log(this.$refs.scroll.scroll.y);
+    this.saveY = this.$refs.scroll.scroll.y
+  },
+  destroyed() {
+    console.log("destroyed");
   },
   // 通过生命周期函数 调用 网络请求
   created() {
@@ -103,13 +117,13 @@ export default {
         case 2:
           this.currentType = "sell";
           break;
-      };
-      this.$refs.tabcontrol2.currentindex =index;
-      this.$refs.tabcontrol1.currentindex =index;
+      }
+      this.$refs.tabcontrol2.currentindex = index;
+      this.$refs.tabcontrol1.currentindex = index;
     },
-    imgload(){
+    imgload() {
       // 获得 tabcontrol 距离页面高度
-      this.tabcontroloffset = this.$refs.tabcontrol1.$el.offsetTop
+      this.tabcontroloffset = this.$refs.tabcontrol1.$el.offsetTop;
     },
     getposition(position) {
       // 决定 返回top 是否显示
@@ -117,7 +131,7 @@ export default {
       this.isshow = position.y <= -500;
 
       // 决定tabctrol是否吸顶
-      this.isfixed = this.tabcontroloffset < -(position.y)
+      this.isfixed = this.tabcontroloffset < -position.y;
     },
     backtopclick() {
       // 通过refs 获取子组件的 属性
@@ -125,8 +139,7 @@ export default {
     },
     // 上拉加载更多
     pullingUp() {
-      console.log('more');
-      this.getHomeGoods(this.currentType)
+      this.getHomeGoods(this.currentType);
     },
     getHomeMultidata() {
       getHomeMultidata().then((res) => {
@@ -142,7 +155,7 @@ export default {
         this.goods[type].list.push(...res.data.data.list);
         this.goods[type].page += 1;
 
-        this.$refs.scroll.scroll.finishPullUp()
+        this.$refs.scroll.scroll.finishPullUp();
       });
     },
   },
@@ -164,7 +177,7 @@ export default {
   top: 0;
   z-index: 9; */
 }
-.tabcontrol{
+.tabcontrol {
   position: relative;
   z-index: 9;
 }
@@ -177,6 +190,4 @@ export default {
   left: 0;
   right: 0;
 }
-
-
 </style>

@@ -9,7 +9,8 @@ const category = () =>
     import('../views/category/category.vue')
 const profile = () =>
     import('../views/profile/profile.vue')
-
+const detail = () =>
+    import('../views/detail/Detail.vue')
 // 3.配置路由和组件之间到映射关系
 
 const routes = [{
@@ -28,6 +29,11 @@ const routes = [{
 }, {
     path: '/profile',
     component: profile,
+},{
+    // 定义动态路由
+    // 到时候跳转的链接 后面一串 会传到  param iid
+    path:'/detail/:iid',
+    component:detail
 }]
 
 

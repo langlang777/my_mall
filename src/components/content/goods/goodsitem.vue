@@ -1,5 +1,5 @@
 <template>
-  <div class="goods-item">
+  <div class="goods-item" @click="itemclick">
       <img :src="goodsitem.show.img" alt="" >
       <div class="goods-info">
           <p>{{goodsitem.title}}</p>
@@ -18,6 +18,12 @@ export default {
                 return {}
             }
         }
+    },
+    methods: {
+      itemclick(){
+        // 点击就跳转到detail,并同时传参到 iid Vue.$route.params
+        this.$router.push('/detail/' + this.goodsitem.iid)
+      }
     },
 }
 </script>

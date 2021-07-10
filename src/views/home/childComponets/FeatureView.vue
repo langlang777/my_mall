@@ -10,7 +10,7 @@
 export default {};
 </script>
 
-<style>
+<style scoped>
 .featrue img{
     width: 100%;
 }

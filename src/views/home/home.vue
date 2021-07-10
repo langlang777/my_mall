@@ -78,13 +78,11 @@ export default {
     BackTop,
   },
   activated(){
-    console.log(this.$refs.scroll.scroll.y);
     this.$refs.scroll.scroll.refresh()
     this.$refs.scroll.scroll.scrollTo(0,this.saveY,0)
     
   },
   deactivated() {
-    console.log(this.$refs.scroll.scroll.y);
     this.saveY = this.$refs.scroll.scroll.y
   },
   destroyed() {
@@ -162,7 +160,7 @@ export default {
 };
 </script>
 
-<style >
+<style scoped>
 #home {
   /*padding-top: 44px;*/
   height: 100vh;

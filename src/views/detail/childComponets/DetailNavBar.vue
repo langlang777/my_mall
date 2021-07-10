@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <nav-bar>
+  <div >
+    <nav-bar >
       <template v-slot:left>
           <div class="backimg" @click="back">
           <img src="~assets/img/common/back.svg" alt="">
@@ -48,10 +48,13 @@ export default {
 };
 </script>
 
-<style>
-.title {
-  display: flex;
-}
+<style scoped>
+
+ .title {
+    display: flex;
+    padding: 0 10px;
+    /* font-size: 14px; */
+  }
 .titlename {
   flex: 1;
   font-style: 13px;

@@ -33,7 +33,10 @@ const routes = [{
     // 定义动态路由
     // 到时候跳转的链接 后面一串 会传到  param iid
     path:'/detail/:iid',
-    component:detail
+    component:detail,
+    mate:{
+        show: true
+    }
 }]
 
 

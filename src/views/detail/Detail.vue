@@ -4,8 +4,10 @@
       <Detailswiper :topImages='topImages'></Detailswiper>
       <DetailBaseInfo :goods='goods'></DetailBaseInfo>
       <DetailShopInfo :shop="shop"></DetailShopInfo>
-     
       <DetailGoodsInfo :detailInfo='detailInfo'  ></DetailGoodsInfo>
+      <DetailParamInfo :paramInfo='GoodsParam'></DetailParamInfo>
+      <DetailCommentInfo :commentInfo='commentInfo'></DetailCommentInfo>
+      <GoodsList :goods='recommends'></GoodsList>
   </div>
 </template>
 
@@ -15,9 +17,12 @@ import Detailswiper from './childComponets/Detailswiper.vue'
 import DetailBaseInfo from './childComponets/DetailBaseInfo.vue'
 import DetailShopInfo from './childComponets/DetailShopInfo.vue'
 import DetailGoodsInfo from './childComponets/DetailGoodsInfo.vue'
+import DetailParamInfo from './childComponets/DetailParamInfo.vue'
+import DetailCommentInfo from './childComponets/DetailCommentInfo.vue'
+import GoodsList from "components/content/goods/goodslist";
 
 
-import {getDetail,Goodsinfo,Shop} from 'network/detail.js'
+import {getDetail,Goodsinfo,Shop,GoodsParam,getRecommend} from 'network/detail.js'
 
 export default {
     name:'Detail',
@@ -28,6 +33,9 @@ export default {
             goods:{},
             shop:{},
             detailInfo:{},
+            GoodsParam:{},
+            commentInfo:{},
+            recommends:[]
         }
     },
     components:{
@@ -35,7 +43,10 @@ export default {
       Detailswiper,
       DetailBaseInfo,
       DetailShopInfo,
-      DetailGoodsInfo
+      DetailGoodsInfo,
+      DetailParamInfo,
+      DetailCommentInfo,
+      GoodsList
     },
     methods: {
       imgload(){
@@ -47,11 +58,19 @@ export default {
 
         getDetail(this.iid).then(res =>{
             const data = res.data.result
-            console.log(res);
+            // console.log(res);
             this.topImages = data.itemInfo.topImages
             this.goods = new Goodsinfo(data.itemInfo,data.columns,data.shopInfo.services)
             this.shop = new Shop(data.shopInfo)
             this.detailInfo = data.detailInfo
+            this.GoodsParam =new GoodsParam(data.itemParams.info,data.itemParams.rule)
+            if(data.rate.cRate !== 0){
+              this.commentInfo = data.rate.list[0]
+            }
+        })
+        getRecommend().then(res=>{
+          this.recommends = res.data.data.list
+          console.log(this.recommends);
         })
     }
 }

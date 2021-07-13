@@ -22,3 +22,14 @@ function padLeftZero (str) {
   return ('00' + str).substr(str.length);
 };
 
+export function debouce(func,timeout){
+  let timer = null;
+  return function (...args){
+    if (timer){
+      clearTimeout(timer)
+    }
+    timer = setTimeout(() => {
+      func(...args)
+    }, timeout);
+  }
+}

@@ -8,6 +8,9 @@
       <DetailParamInfo :paramInfo='GoodsParam'></DetailParamInfo>
       <DetailCommentInfo :commentInfo='commentInfo'></DetailCommentInfo>
       <GoodsList :goods='recommends'></GoodsList>
+      <DetailBottomBar @addcart='addToCart'></DetailBottomBar>
+      <toast message='message' :isshow='isshow'></toast>
+      
   </div>
 </template>
 
@@ -19,8 +22,11 @@ import DetailShopInfo from './childComponets/DetailShopInfo.vue'
 import DetailGoodsInfo from './childComponets/DetailGoodsInfo.vue'
 import DetailParamInfo from './childComponets/DetailParamInfo.vue'
 import DetailCommentInfo from './childComponets/DetailCommentInfo.vue'
+import DetailBottomBar from './childComponets/DetailBottomBar.vue'
+
 import GoodsList from "components/content/goods/goodslist";
 
+import toast from 'components/common/toast/toast.vue'
 
 import {getDetail,Goodsinfo,Shop,GoodsParam,getRecommend} from 'network/detail.js'
 
@@ -35,7 +41,9 @@ export default {
             detailInfo:{},
             GoodsParam:{},
             commentInfo:{},
-            recommends:[]
+            recommends:[],
+            isshow:false,
+            message:''
         }
     },
     components:{
@@ -46,11 +54,33 @@ export default {
       DetailGoodsInfo,
       DetailParamInfo,
       DetailCommentInfo,
-      GoodsList
+      GoodsList,
+      DetailBottomBar,
+      toast
     },
     methods: {
       imgload(){
         this.isshow = true
+      },
+      addToCart(){
+        const product = {}
+        product.image = this.topImages[0];
+        product.title = this.goods.title
+        product.desc = this.goods.desc
+        product.price = this.goods.newPrice
+        product.iid = this.iid
+
+        // this.$store.commit('addCart',product)
+        this.$store.dispatch('addCart',product).then(res =>{
+          this.isshow = true;
+          this.message= res;
+
+          setTimeout(() => {
+            this.message = ''
+            this.isshow = false
+          },1000)
+        })
+
       }
     },
     created(){
